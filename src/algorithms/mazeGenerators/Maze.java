@@ -34,21 +34,38 @@ public class Maze {
         this.goalPosition = goalPosition;
     }
 
+
+
     // Getter לנקודת סיום, אם נדרש
     public Position getGoalPosition() {
         return goalPosition;
     }
-    @Override
-    public String toString() {
+
+    public void print() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                // נניח: 1 = קיר, 0 = דרך
-                sb.append(maze[i][j] == 1 ? "█" : " ");
+                // אם מדובר בנקודת התחלה
+                if (new Position(i, j).equals(startPosition)) {
+                    sb.append("S");  // נקודת התחלה
+                }
+                // אם מדובר בנקודת סיום
+                else if (new Position(i, j).equals(goalPosition)) {
+                    sb.append("E");  // נקודת סיום
+                }
+                // אם זה דרך (ערך 0)
+                else if (maze[i][j] == 0) {
+                    sb.append("0");  // דרך (ריקה)
+                }
+                // אם זה קיר (ערך 1)
+                else {
+                    sb.append("1");  // קיר
+                }
             }
             sb.append("\n");
         }
-        return sb.toString();
+        System.out.println(sb.toString());
     }
+
 
 }
