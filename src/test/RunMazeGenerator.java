@@ -12,10 +12,10 @@ public class RunMazeGenerator {
 
     private static void testMazeGenerator(IMazeGenerator mazeGenerator) {
         // מדפיס את הזמן שלוקח לאלגוריתם להריץ את יצירת המבוך
-        System.out.println(String.format("Maze generation time(ms): %s", mazeGenerator.measureAlgorithmTimeMillis(10000, 10000)));
+        System.out.println(String.format("Maze generation time(ms): %s", mazeGenerator.measureAlgorithmTimeMillis(1000, 1000)));
 
         // יצירת מבוך חדש
-        Maze maze = mazeGenerator.generate(10, 10);
+        Maze maze = mazeGenerator.generate(15, 15);
 
         // הדפסת המבוך
         maze.print();

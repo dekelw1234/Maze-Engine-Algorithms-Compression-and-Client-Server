@@ -49,7 +49,6 @@ public class SimpleMazeGenerator extends AMazeGenerator {
                 }
             }
 
-
             pathFound = checkPathExists(start, goal, mazeArray, rows, columns);
         }
 
