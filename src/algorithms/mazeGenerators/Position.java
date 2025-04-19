@@ -19,7 +19,7 @@ public class Position {
         return column;
     }
 
-    // Setters לשינוי ערכים אם נדרש
+    // Setters לשינוי ערכים
     public void setRow(int row) {
         this.row = row;
     }
@@ -28,13 +28,13 @@ public class Position {
         this.column = column;
     }
 
-    // מתודה להדפסת המיקום בצורה קריאה
+    // פוקנציה להדפסת המיקום בצורה קריאה
     @Override
     public String toString() {
         return "(" + row + ", " + column + ")";
     }
 
-    // הגדרת שוויון בין מיקומים – חשוב כאשר נשווה בין מיקומים
+    //  שוויון בין מיקומים
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true; // הם אותו מופע

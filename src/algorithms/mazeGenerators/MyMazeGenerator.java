@@ -9,111 +9,120 @@ public class MyMazeGenerator extends AMazeGenerator {
 
     @Override
     public Maze generate(int rows, int columns) {
-        Maze maze = new Maze(rows, columns);
-        int[][] map = maze.getMaze();
-        boolean[][] visited = new boolean[rows][columns];
         Random rand = new Random();
 
-        // 1. Fill all cells as walls
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < columns; c++) {
-                map[r][c] = 1;
-            }
-        }
+        while (true) {
+            Maze maze = new Maze(rows, columns);
+            int[][] map = maze.getMaze();
+            boolean[][] visited = new boolean[rows][columns];
 
-        // 2. Choose random start position on edges
-        Position start = getRandomEdgePosition(rows, columns, rand);
-        visited[start.getRow()][start.getColumn()] = true;
-        map[start.getRow()][start.getColumn()] = 0;
-        maze.setStartPosition(start);
-
-        // 3. Iterative DFS backtracking with neighbor-of-neighbor carving
-        Stack<Position> stack = new Stack<>();
-        stack.push(start);
-        int[] dR = { -1, 1, 0, 0 };
-        int[] dC = { 0, 0, -1, 1 };
-
-        while (!stack.isEmpty()) {
-            Position current = stack.peek();
-            int cr = current.getRow();
-            int cc = current.getColumn();
-
-            List<Position> neighbors = new ArrayList<>();
-            // consider cells two steps away
-            for (int i = 0; i < 4; i++) {
-                int nr = cr + dR[i] * 2;
-                int nc = cc + dC[i] * 2;
-                if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && !visited[nr][nc]) {
-                    neighbors.add(new Position(nr, nc));
+            // אתחול המבוך: כל תא מתחיל כקיר
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < columns; c++) {
+                    map[r][c] = 1;
                 }
             }
 
-            if (!neighbors.isEmpty()) {
-                Position chosen = neighbors.get(rand.nextInt(neighbors.size()));
-                // carve through intermediate cell
-                int mr = (cr + chosen.getRow()) / 2;
-                int mc = (cc + chosen.getColumn()) / 2;
-                map[mr][mc] = 0;
-                visited[chosen.getRow()][chosen.getColumn()] = true;
-                map[chosen.getRow()][chosen.getColumn()] = 0;
-                stack.push(chosen);
-            } else {
-                stack.pop();
+            // בחירת נקודת התחלה: תא אקראי על שוליים
+            Position start = getRandomEdgePosition(rows, columns, rand);
+            map[start.getRow()][start.getColumn()] = 0;
+            visited[start.getRow()][start.getColumn()] = true;
+
+            // שימוש במחסנית ל־DFS איטרטיבי לבניית תעלות במבוך
+            Stack<Position> stack = new Stack<>();
+            stack.push(start);
+
+            // אופציות אפשריות לתנועה מכל נקודה
+            int[] dR = {-1, 1, 0, 0};
+            int[] dC = {0, 0, -1, 1};
+
+            // שבירת הקיר כך שכל תא פתוח יהיה מחובר - יצירת תעלה
+            while (!stack.isEmpty()) {
+                Position current = stack.peek();
+                int currRow = current.getRow();
+                int currCol = current.getColumn();
+
+                // איסוף תאים שנמצאים במרחק "קפיצה" של שני צעדים ולא בוקרו
+                List<Position> potentialNeighbors = new ArrayList<>();
+                for (int i = 0; i < 4; i++) {
+                    int nr = currRow + dR[i] * 2;
+                    int nc = currCol + dC[i] * 2;
+                    if (nr >= 0 && nr < rows && nc >= 0 && nc < columns
+                            && !visited[nr][nc]) {
+                        potentialNeighbors.add(new Position(nr, nc));
+                    }
+                }
+
+                if (!potentialNeighbors.isEmpty()) {
+                    // בחירה אקראית בין התאים הפוטנציאליים
+                    Position next = potentialNeighbors.get(rand.nextInt(potentialNeighbors.size()));
+
+                    // שבירת הקיר שבין התא הנוכחי ל־next כדי ליצור מעבר
+                    int interRow = (currRow + next.getRow()) / 2;
+                    int interCol = (currCol + next.getColumn()) / 2;
+                    map[interRow][interCol] = 0;
+
+                    // סימון התו הבא כדרך וביקורו
+                    map[next.getRow()][next.getColumn()] = 0;
+                    visited[next.getRow()][next.getColumn()] = true;
+
+                    // המשך ה־DFS מהתו הבא
+                    stack.push(next);
+                } else {
+                    // אין עוד תאים פנויים, חזרה אחורה במסלול
+                    stack.pop();
+                }
             }
-        }
 
-        // 4. Choose goal among reachable edge cells, distinct and not adjacent to start
-        List<Position> edgeCells = new ArrayList<>();
-        // top and bottom edges
-        for (int c = 0; c < columns; c++) {
-            if (map[0][c] == 0) edgeCells.add(new Position(0, c));
-            if (map[rows - 1][c] == 0) edgeCells.add(new Position(rows - 1, c));
-        }
-        // left and right edges (excluding corners to avoid duplicates)
-        for (int r = 1; r < rows - 1; r++) {
-            if (map[r][0] == 0) edgeCells.add(new Position(r, 0));
-            if (map[r][columns - 1] == 0) edgeCells.add(new Position(r, columns - 1));
-        }
-        // remove start itself and its immediate neighbors
-        edgeCells.removeIf(p -> p.equals(start) || areAdjacent(start, p));
+            // בחירת נקודת סיום חוקית על השוליים
+            List<Position> openEdges = new ArrayList<>();
+            for (int c = 0; c < columns; c++) {
+                if (map[0][c] == 0) openEdges.add(new Position(0, c));
+                if (map[rows - 1][c] == 0) openEdges.add(new Position(rows - 1, c));
+            }
+            for (int r = 1; r < rows - 1; r++) {
+                if (map[r][0] == 0) openEdges.add(new Position(r, 0));
+                if (map[r][columns - 1] == 0) openEdges.add(new Position(r, columns - 1));
+            }
 
-        if (edgeCells.isEmpty()) {
-            throw new IllegalStateException("No valid edge cells available for goal");
+            // הסרת נקודת ההתחלה וכל תאים סמוכים לה כדי למנוע בחירתם כיעד
+            openEdges.removeIf(p -> p.equals(start) || areAdjacent(start, p));
+
+            // בחירת נקודת סיום: מריץ בדיקת מסלול תקין בין ההתחלה לסיום לפני שמחזיר את המבוך
+            for (Position candidate : openEdges) {
+                if (pathExists(start, candidate, map)) {
+                    maze.setStartPosition(start);
+                    maze.setGoalPosition(candidate);
+                    return maze; // מבוך תקין נוצר
+                }
+            }
+            // אם לא נמצא מועמד מתאים, מבוצע סיבוב חדש של יצירת מבוך עד לקבלת מבוך תקין
         }
-
-        Position goal;
-        do {
-            goal = edgeCells.get(rand.nextInt(edgeCells.size()));
-        } while (!pathExists(start, goal, map));
-        maze.setGoalPosition(goal);
-
-        return maze;
     }
 
-    /**
-     * Checks if a path exists between start and goal in the given map using DFS.
-     */
-    private boolean pathExists(Position start, Position goal, int[][] map) {
-        int rows = map.length;
-        int cols = map[0].length;
-        boolean[][] visited = new boolean[rows][cols];
+
+    //מוודא שיש מסלול בין שתי נקודות במפה באמצעות DFS
+         private boolean pathExists(Position start, Position goal, int[][] map) {
+        int n = map.length;
+        int m = map[0].length;
+        boolean[][] seen = new boolean[n][m];
         Stack<Position> stack = new Stack<>();
         stack.push(start);
-        visited[start.getRow()][start.getColumn()] = true;
+        seen[start.getRow()][start.getColumn()] = true;
 
         int[] dR = {-1, 1, 0, 0};
         int[] dC = {0, 0, -1, 1};
         while (!stack.isEmpty()) {
-            Position current = stack.pop();
-            if (current.equals(goal)) {
+            Position curr = stack.pop();
+            if (curr.equals(goal)) {
                 return true;
             }
             for (int i = 0; i < 4; i++) {
-                int nr = current.getRow() + dR[i];
-                int nc = current.getColumn() + dC[i];
-                if (nr >= 0 && nr < rows && nc >= 0 && nc < cols
-                        && !visited[nr][nc] && map[nr][nc] == 0) {
-                    visited[nr][nc] = true;
+                int nr = curr.getRow() + dR[i];
+                int nc = curr.getColumn() + dC[i];
+                if (nr >= 0 && nr < n && nc >= 0 && nc < m
+                        && !seen[nr][nc] && map[nr][nc] == 0) {
+                    seen[nr][nc] = true;
                     stack.push(new Position(nr, nc));
                 }
             }
@@ -121,39 +130,41 @@ public class MyMazeGenerator extends AMazeGenerator {
         return false;
     }
 
-    /**
-     * Returns a random cell position on the edges of the maze.
-     */
+
+     // מחזיר מיקום אקראי מתוך תאי השוליים: עליון, תחתון, שמאלי או ימני
+
     private Position getRandomEdgePosition(int rows, int columns, Random rand) {
-        int edge = rand.nextInt(4);
-        int row = 0, col = 0;
+        int edge = rand.nextInt(4); // 0=Top, 1=Right, 2=Bottom, 3=Left
+        int row = 0, column = 0;
+
         switch (edge) {
-            case 0: // Top edge
+            case 0: // Top row
                 row = 0;
-                col = rand.nextInt(columns);
+                column = rand.nextInt(columns);
                 break;
-            case 1: // Bottom edge
+            case 1: // Right column
+                row = rand.nextInt(rows);
+                column = columns - 1;
+                break;
+            case 2: // Bottom row
                 row = rows - 1;
-                col = rand.nextInt(columns);
+                column = rand.nextInt(columns);
                 break;
-            case 2: // Left edge
+            case 3: // Left column
                 row = rand.nextInt(rows);
-                col = 0;
-                break;
-            case 3: // Right edge
-                row = rand.nextInt(rows);
-                col = columns - 1;
+                column = 0;
                 break;
         }
-        return new Position(row, col);
+
+        return new Position(row, column);
     }
 
-    /**
-     * Checks if two positions are adjacent (Manhattan distance = 1).
-     */
+
+     // בודק מרחק  של יחידה אחת כדי לקבוע שכנים
+
     private boolean areAdjacent(Position p1, Position p2) {
-        int rowDiff = Math.abs(p1.getRow() - p2.getRow());
-        int colDiff = Math.abs(p1.getColumn() - p2.getColumn());
-        return (rowDiff == 1 && colDiff == 0) || (rowDiff == 0 && colDiff == 1);
+        int dr = Math.abs(p1.getRow() - p2.getRow());
+        int dc = Math.abs(p1.getColumn() - p2.getColumn());
+        return (dr == 1 && dc == 0) || (dr == 0 && dc == 1);
     }
 }
