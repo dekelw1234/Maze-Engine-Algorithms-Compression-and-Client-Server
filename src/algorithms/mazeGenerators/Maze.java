@@ -24,7 +24,7 @@ public class Maze {
         this.startPosition = startPosition;
     }
 
-    // Getter לנקודת התחלה, אם נדרש
+    // Getter לנקודת התחלה,
     public Position getStartPosition() {
         return startPosition;
     }
@@ -36,7 +36,7 @@ public class Maze {
 
 
 
-    // Getter לנקודת סיום, אם נדרש
+    // Getter לנקודת סיום,
     public Position getGoalPosition() {
         return goalPosition;
     }
@@ -55,7 +55,7 @@ public class Maze {
                 }
                 // אם זה דרך (ערך 0)
                 else if (maze[i][j] == 0) {
-                    sb.append("0");  // דרך (ריקה)
+                    sb.append("0");  // דרך
                 }
                 // אם זה קיר (ערך 1)
                 else {

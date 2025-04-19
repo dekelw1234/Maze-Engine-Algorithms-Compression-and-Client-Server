@@ -13,28 +13,28 @@ public class MyMazeGenerator extends AMazeGenerator {
         // אתחול המבוך: כל התאים הם קירות (1)
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                mazeArray[i][j] = 1;  // כל התאים הם קירות (1)
+                mazeArray[i][j] = 1;  
             }
         }
 
         // יצירת מערך של כל הקצוות
         Random rand = new Random();
-        Position start = getRandomEdgePosition(rows, columns, rand);
-        Position goal = getRandomEdgePosition(rows, columns, rand);
+        Position start = getRandomPosition(rows, columns, rand);
+        Position endpos = getRandomPosition(rows, columns, rand);
 
-        // להימנע ממקרה שבו התחלה וסיום יהיו באותו מקום
-        while (start.equals(goal)) {
-            goal = getRandomEdgePosition(rows, columns, rand);
+        // נקודת התחלה שונה מנקודת הסיום
+        while (start.equals(endpos)) {
+            endpos = getRandomPosition(rows, columns, rand);
         }
 
-        // לוודא שהנקודות לא יהיו ליד אחת את השנייה
-        while (areAdjacent(start, goal)) {
-            goal = getRandomEdgePosition(rows, columns, rand);
+        // לוודא שההתחלה והסיום לא אחת ליד השנייה
+        while (areAdjacent(start, endpos)) {
+            endpos = getRandomPosition(rows, columns, rand);
         }
 
         // הגדרת נקודות התחלה וסיום במבוך
         maze.setStartPosition(start);
-        maze.setGoalPosition(goal);
+        maze.setGoalPosition(endpos);
 
         // ביצוע חיפוש לעומק (DFS) בין נקודת התחלה לנקודת סיום
         Stack<Position> stack = new Stack<>();
@@ -64,7 +64,7 @@ public class MyMazeGenerator extends AMazeGenerator {
                     visited[newRow][newCol] = true;
                     stack.push(new Position(newRow, newCol));
                     hasUnvisitedNeighbor = true;
-                    break; // אם מצאנו שכן לא מבוקר, נעבור אליו מיד
+                    break; // אם מצאנו שכן לא מבוקר, נעבור אליו
                 }
             }
 
@@ -74,14 +74,14 @@ public class MyMazeGenerator extends AMazeGenerator {
             }
 
             // אם הגענו לנקודת הסיום, נעצור
-            if (current.equals(goal)) {
+            if (current.equals(endpos)) {
                 break;
             }
         }
 
         // מיקום התחלה וסיום יהיו בדרכים (0)
         mazeArray[start.getRow()][start.getColumn()] = 0;
-        mazeArray[goal.getRow()][goal.getColumn()] = 0;
+        mazeArray[endpos.getRow()][endpos.getColumn()] = 0;
 
         return maze;
     }
@@ -91,16 +91,16 @@ public class MyMazeGenerator extends AMazeGenerator {
         return row >= 0 && row < rows && col >= 0 && col < columns;
     }
 
-    // בדוק אם שתי נקודות סמוכות (באותו רווח: אנכי או אופקי)
-    private boolean areAdjacent(Position start, Position goal) {
-        int rowDiff = Math.abs(start.getRow() - goal.getRow());
-        int colDiff = Math.abs(start.getColumn() - goal.getColumn());
+    // בדיקת שכנים חוקית
+    private boolean areAdjacent(Position start, Position endpos) {
+        int rowDiff = Math.abs(start.getRow() - endpos.getRow());
+        int colDiff = Math.abs(start.getColumn() - endpos.getColumn());
         // אם ההפרש הוא 1 בשורה או בעמודה, אז הן סמוכות
         return (rowDiff == 1 && colDiff == 0) || (rowDiff == 0 && colDiff == 1);
     }
 
-    // מתודה לבחור מיקום אקראי מתוך הקצוות
-    private Position getRandomEdgePosition(int rows, int columns, Random rand) {
+    // פונקצייה לבחירת מיקום אקראית  מהקצוות
+    private Position getRandomPosition(int rows, int columns, Random rand) {
         int edge = rand.nextInt(4); // 0=Top, 1=Right, 2=Bottom, 3=Left
         int row = 0, column = 0;
 
