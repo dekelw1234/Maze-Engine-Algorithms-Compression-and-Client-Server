@@ -14,6 +14,10 @@ public abstract class AState {
         return this.fatherStep;
     }
 
+    public void setCost(int cost){
+        this.cost=cost;
+    }
+
     public void setFatherStep(AState fatherStep) {
         this.fatherStep=fatherStep;
     }

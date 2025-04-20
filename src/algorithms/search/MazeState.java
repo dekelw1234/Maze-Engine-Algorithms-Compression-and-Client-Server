@@ -9,7 +9,7 @@ public class MazeState extends AState {
     public MazeState(Position position, MazeState fatherStep,int cost){
 
         this.position=position;
-        this.stateView="( " +position.getRow() + " , "+position.getColumn()+" )";
+        this.stateView="( " +position.getRowIndex() + " , "+position.getColumnIndex()+" )";
         this.fatherStep=fatherStep;
         this.cost=cost;
 
