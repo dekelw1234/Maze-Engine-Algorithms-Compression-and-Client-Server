@@ -73,7 +73,7 @@ public class Position {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true; // הם אותו מופע
+        if (this == obj) return true; // are same object?
         if (obj == null || getClass() != obj.getClass()) return false;
         Position other = (Position) obj;
         return row == other.row && column == other.column;
