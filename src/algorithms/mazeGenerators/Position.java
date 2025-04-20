@@ -1,40 +1,76 @@
 package algorithms.mazeGenerators;
 
+
+/**
+ * Represents a position (single cell) within a maze, defined by its row and column indices.
+ */
 public class Position {
     private int row;
     private int column;
 
-    // בנאי שמקבל את השורה והעמודה
+    /**
+     * Constructs a new Position with specified row and column.
+     *
+     * @param row    The row index of the position.
+     * @param column The column index of the position.
+     */
     public Position(int row, int column) {
         this.row = row;
         this.column = column;
     }
 
-    // Getters לקבלת ערכים
+    /**
+     * Returns the row index of this position.
+     *
+     * @return The row index.
+     */
     public int getRow() {
         return row;
     }
-
+    /**
+     * Returns the column index of this position.
+     *
+     * @return The column index.
+     */
     public int getColumn() {
         return column;
     }
 
-    // Setters לשינוי ערכים
+    /**
+     * Sets the row index of this position.
+     *
+     * @param row The new row index.
+     */
     public void setRow(int row) {
         this.row = row;
     }
 
+    /**
+     * Sets the column index of this position.
+     *
+     * @param column The new column index.
+     */
     public void setColumn(int column) {
         this.column = column;
     }
 
-    // פוקנציה להדפסת המיקום בצורה קריאה
+    /**
+     * returns a human-readable string representation of the position.
+     *
+     * @return A string in the format "(row, column)".
+     */
     @Override
     public String toString() {
         return "(" + row + ", " + column + ")";
     }
 
-    //  שוויון בין מיקומים
+    /**
+     * Checks if this position is equal to another object.
+     * Two positions are equal if their row and column values are the same.
+     *
+     * @param obj The object to compare with.
+     * @return true if equal, false otherwise.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true; // הם אותו מופע
