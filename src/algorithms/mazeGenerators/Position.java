@@ -24,7 +24,7 @@ public class Position {
      *
      * @return The row index.
      */
-    public int getRow() {
+    public int getRowIndex() {
         return row;
     }
     /**
@@ -32,7 +32,7 @@ public class Position {
      *
      * @return The column index.
      */
-    public int getColumn() {
+    public int getColumnIndex() {
         return column;
     }
 

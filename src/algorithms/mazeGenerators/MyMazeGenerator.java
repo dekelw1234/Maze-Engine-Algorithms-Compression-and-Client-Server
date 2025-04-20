@@ -36,8 +36,8 @@ public class MyMazeGenerator extends AMazeGenerator {
 
             // choose a random start position on the edge
             Position start = getRandomEdgePosition(rows, columns, rand);
-            map[start.getRow()][start.getColumn()] = 0;
-            visited[start.getRow()][start.getColumn()] = true;
+            map[start.getRowIndex()][start.getColumnIndex()] = 0;
+            visited[start.getRowIndex()][start.getColumnIndex()] = true;
 
             // DFS stack to carve the maze paths
             Stack<Position> stack = new Stack<>();
@@ -49,8 +49,8 @@ public class MyMazeGenerator extends AMazeGenerator {
             // DFS to carve paths
             while (!stack.isEmpty()) {
                 Position current = stack.peek();
-                int currRow = current.getRow();
-                int currCol = current.getColumn();
+                int currRow = current.getRowIndex();
+                int currCol = current.getColumnIndex();
 
                 List<Position> potentialNeighbors = new ArrayList<>();
                 for (int i = 0; i < 4; i++) {
@@ -63,12 +63,12 @@ public class MyMazeGenerator extends AMazeGenerator {
 
                 if (!potentialNeighbors.isEmpty()) {
                     Position next = potentialNeighbors.get(rand.nextInt(potentialNeighbors.size()));
-                    int interRow = (currRow + next.getRow()) / 2;
-                    int interCol = (currCol + next.getColumn()) / 2;
+                    int interRow = (currRow + next.getRowIndex()) / 2;
+                    int interCol = (currCol + next.getColumnIndex()) / 2;
 
                     map[interRow][interCol] = 0;
-                    map[next.getRow()][next.getColumn()] = 0;
-                    visited[next.getRow()][next.getColumn()] = true;
+                    map[next.getRowIndex()][next.getColumnIndex()] = 0;
+                    visited[next.getRowIndex()][next.getColumnIndex()] = true;
                     stack.push(next);
                 } else {
                     stack.pop();
@@ -113,7 +113,7 @@ public class MyMazeGenerator extends AMazeGenerator {
         boolean[][] seen = new boolean[n][m];
         Stack<Position> stack = new Stack<>();
         stack.push(start);
-        seen[start.getRow()][start.getColumn()] = true;
+        seen[start.getRowIndex()][start.getColumnIndex()] = true;
 
         int[] dR = {-1, 1, 0, 0};
         int[] dC = {0, 0, -1, 1};
@@ -125,8 +125,8 @@ public class MyMazeGenerator extends AMazeGenerator {
             }
 
             for (int i = 0; i < 4; i++) {
-                int nr = curr.getRow() + dR[i];
-                int nc = curr.getColumn() + dC[i];
+                int nr = curr.getRowIndex() + dR[i];
+                int nc = curr.getColumnIndex() + dC[i];
                 if (nr >= 0 && nr < n && nc >= 0 && nc < m && !seen[nr][nc] && map[nr][nc] == 0) {
                     seen[nr][nc] = true;
                     stack.push(new Position(nr, nc));
@@ -178,8 +178,8 @@ public class MyMazeGenerator extends AMazeGenerator {
      * @return True if the positions are adjacent (orthogonally), false otherwise.
      */
     private boolean areAdjacent(Position p1, Position p2) {
-        int dr = Math.abs(p1.getRow() - p2.getRow());
-        int dc = Math.abs(p1.getColumn() - p2.getColumn());
+        int dr = Math.abs(p1.getRowIndex() - p2.getRowIndex());
+        int dc = Math.abs(p1.getColumnIndex() - p2.getColumnIndex());
         return (dr == 1 && dc == 0) || (dr == 0 && dc == 1);
     }
 }
