@@ -1,15 +1,28 @@
 package algorithms.search;
 import java.util.*;
 
+/**
+ * Represents the Depth First Search algorithm.
+ */
 public class DepthFirstSearch extends ASearchingAlgorithm {
 
     private int nodesEvaluated = 0;
 
+
+    /**
+     * Returns the name of the search algorithm.
+     * @return the name of the algorithm ("Depth First Search").
+     */
     @Override
     public String getName() {
         return "Depth First Search";
     }
 
+    /**
+     * Solves the given searchable problem using the Depth First Search algorithm.
+     * @param searchable the searchable problem to solve (contains start and goal states).
+     * @return the solution found (or an empty solution if no path exists).
+     */
     @Override
     public Solution solve(ISearchable searchable) {
 
@@ -58,13 +71,20 @@ public class DepthFirstSearch extends ASearchingAlgorithm {
         this.solution = new Solution(new ArrayList<>());
         return this.solution; // No path found
     }
-
+    /**
+     * Returns the number of nodes that have been evaluated during the search.
+     * @return the number of nodes evaluated.
+     */
     @Override
     public int getNumberOfNodesEvaluated() {
         return nodesEvaluated;
     }
 
-    // Flip the path
+    /**
+     * Reconstructs the solution path by tracing back from the goal state to the start state.
+     * @param goal the goal state.
+     * @return the solution containing the path from start to goal.
+     */
     private Solution backTrace(AState goal) {
         ArrayList<AState> path = new ArrayList<>();
         AState current = goal;
