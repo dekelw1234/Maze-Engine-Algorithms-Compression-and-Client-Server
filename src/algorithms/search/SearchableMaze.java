@@ -35,8 +35,8 @@ public class SearchableMaze implements ISearchable {
         Position pos = ((MazeState) curState).getPosition();
 
         int[][] map = maze.getMaze(); //מעתיק את המבוך אל מערך
-        int row = pos.getRow();
-        int col = pos.getColumn();
+        int row = pos.getRowIndex();
+        int col = pos.getColumnIndex();
 
         // תנועה אפשרית: למעלה, למטה, שמאלה, ימינה
         int[] directionRow = {-1, 1, 0, 0};

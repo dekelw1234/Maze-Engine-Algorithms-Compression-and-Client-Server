@@ -25,4 +25,10 @@ public abstract class AState {
     public int getCost() {
         return this.cost;
     }
+
+    @Override
+    public String toString(){
+        return this.getStateView();
+    }
+
 }

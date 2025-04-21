@@ -18,8 +18,6 @@ public class BreadthFirstSearch extends ASearchingAlgorithm {
         AState start = searchable.getStartState();
         AState goal = searchable.getGoalState();
 
-        int V = searchable.getAllPossibleStates(start).size();
-
         // Create a queue for BFS
         Queue<AState> queue = new LinkedList<>();
 
@@ -35,7 +33,6 @@ public class BreadthFirstSearch extends ASearchingAlgorithm {
 
             // Dequeue a vertex from queue and store it
             AState current = queue.poll();
-
             // Increment the number of nodes evaluated
             this.nodesEvaluated++;
 
