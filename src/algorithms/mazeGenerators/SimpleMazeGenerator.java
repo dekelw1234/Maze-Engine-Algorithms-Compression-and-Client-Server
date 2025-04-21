@@ -85,7 +85,7 @@ public class SimpleMazeGenerator extends AMazeGenerator {
         boolean[][] visited = new boolean[rows][columns];
         Stack<Position> stack = new Stack<>();
         stack.push(start);
-        visited[start.getRow()][start.getColumn()] = true;
+        visited[start.getRowIndex()][start.getColumnIndex()] = true;
 
 
         int[] rowDirection = {-1, 1, 0, 0};
@@ -100,8 +100,8 @@ public class SimpleMazeGenerator extends AMazeGenerator {
             }
 
             for (int i = 0; i < 4; i++) {
-                int newRow = current.getRow() + rowDirection[i];
-                int newCol = current.getColumn() + colDirection[i];
+                int newRow = current.getRowIndex() + rowDirection[i];
+                int newCol = current.getColumnIndex() + colDirection[i];
 
 
                 if (isValid(newRow, newCol, rows, columns) && mazeArray[newRow][newCol] == 0 && !visited[newRow][newCol]) {
@@ -134,8 +134,8 @@ public class SimpleMazeGenerator extends AMazeGenerator {
      * @return True if the positions are adjacent, false otherwise.
      */
     private boolean areAdjacent(Position start, Position goal) {
-        int rowDiff = Math.abs(start.getRow() - goal.getRow());
-        int colDiff = Math.abs(start.getColumn() - goal.getColumn());
+        int rowDiff = Math.abs(start.getRowIndex() - goal.getRowIndex());
+        int colDiff = Math.abs(start.getColumnIndex() - goal.getColumnIndex());
         return (rowDiff == 1 && colDiff == 0) || (rowDiff == 0 && colDiff == 1);
     }
 

@@ -16,72 +16,68 @@ public class BestFirstSearch extends ASearchingAlgorithm {
         if (searchable == null)
             return null;
 
-        // Initialize the parameters for solving
+        // initialize the start and goal states
         AState start = searchable.getStartState();
         AState goal = searchable.getGoalState();
 
-        // Open list (priority queue)
-        PriorityQueue<AState> open = new PriorityQueue<>(Comparator.comparingInt(AState::getCost));  // Min-heap by cost (or heuristic)
+        // open list (priority queue ordered by f(n) = g(n) + h(n))
+        PriorityQueue<AState> open = new PriorityQueue<>(Comparator.comparingInt(AState::getCost));
 
-        // Close list
-        HashSet<AState> close = new HashSet<>();
+        // closed list (visited states)
+        HashSet<AState> closed = new HashSet<>();
 
-        // Add the start state to the open list
+        // initialize the start state
+        start.setCost(0);
         open.add(start);
 
-        // Iterate until open list is empty
         while (!open.isEmpty()) {
-            // Get the node with the highest priority (lowest cost)
+            // remove the state with the lowest cost (f(n))
             AState current = open.poll();
-
-            // Increment the number of nodes evaluated
             this.nodesEvaluated++;
 
-            // Add the current node to the close list
-            close.add(current);
-
-            // If we reached the goal, return the solution
+            // if the goal is reached, reconstruct the solution path
             if (current.equals(goal)) {
-                return backTrace(current); // Build the solution
+                return backTrace(current);
             }
 
-            // Get all adjacent nodes (states)
-            List<AState> adjacent = searchable.getAllPossibleStates(current);
+            // mark current state as visited
+            closed.add(current);
 
-            for (AState state : adjacent) {
-                if (close.contains(state)) {
-                    continue;  // Skip if already in close list
+            // explore all possible next states
+            List<AState> neighbors = searchable.getAllPossibleStates(current);
+
+            for (AState neighbor : neighbors) {
+                if (closed.contains(neighbor)) {
+                    continue;  // skip already visited states
                 }
 
-                if (!open.contains(state)) {
-                    // If the state is not in open list, calculate cost and parent
-                    state.setFatherStep(current);
-                    state.setCost(calculateHeuristic(state, goal));  // Or some other cost function
-                    open.add(state);
-                } else {
-                    // If state is in open list, check if this path is better
-                    // Compare the current path cost with the new one and update if shorter
-                    if (state.getCost() > calculateHeuristic(state, goal)) {
-                        state.setFatherStep(current);
-                        state.setCost(calculateHeuristic(state, goal));
+                // calculate tentative g(n) = g(current) + cost of moving (assume cost = 1)
+                int currentG = current.getCost() - current.getCost();
+                int tentativeG = currentG + 1;
+
+                // Calculate total cost
+                int totalCost = tentativeG + neighbor.getCost();
+
+                // if neighbor not in open list OR this path is better than previous
+                if (!open.contains(neighbor) || totalCost < neighbor.getCost()) {
+                    neighbor.setFatherStep(current);   // Update parent
+                    neighbor.setCost(totalCost);       // Update cost (f = g + h)
+
+                    if (!open.contains(neighbor)) {
+                        open.add(neighbor);            // Add to open list if not already there
                     }
                 }
             }
         }
 
+        // No path was found
         this.solution = new Solution(new ArrayList<>());
-        return this.solution; // No path found
+        return this.solution;
     }
 
     @Override
     public int getNumberOfNodesEvaluated() {
         return nodesEvaluated;
-    }
-
-    // Calculate heuristic
-    private int calculateHeuristic(AState state, AState goal) {
-
-        return state.getCost();
     }
 
     // Flip the path
