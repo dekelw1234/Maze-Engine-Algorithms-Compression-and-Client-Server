@@ -19,6 +19,9 @@ public class MazeState extends AState {
      */
     public MazeState(Position position, MazeState fatherStep,int cost){
 
+        if (position==null){
+            throw new IllegalArgumentException("position is null");
+        }
         this.position=position;
         this.stateView="( " +position.getRowIndex() + " , "+position.getColumnIndex()+" )";
         this.fatherStep=fatherStep;

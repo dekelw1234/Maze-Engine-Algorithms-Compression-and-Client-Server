@@ -18,6 +18,10 @@ public class Maze {
      * @param columns Number of columns in the maze.
      */
     public Maze(int rows, int columns) {
+
+        if (rows<=1 && columns<=1){
+            throw new IllegalArgumentException("Rows or columns number are not valid");
+        }
         this.maze = new int[rows][columns];
         this.rows = rows;
         this.columns = columns;

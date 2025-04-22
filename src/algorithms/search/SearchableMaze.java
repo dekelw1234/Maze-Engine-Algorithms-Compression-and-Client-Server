@@ -18,6 +18,10 @@ public class SearchableMaze implements ISearchable {
      * @param maze the maze to be adapted for searching.
      */
     public SearchableMaze(Maze maze) {
+
+        if (maze==null){
+            throw new IllegalArgumentException("Maze is null");
+        }
         this.maze = maze;
     }
 
@@ -52,14 +56,17 @@ public class SearchableMaze implements ISearchable {
     @Override
     public List<AState> getAllPossibleStates(AState curState) {
 
-        List<AState> optionalSteps = new LinkedList<>(); //יכיל את כל מי שאפשר לזוז מהמצב אליו
+        if (curState==null){
+            return null;
+        }
+
+        List<AState> optionalSteps = new LinkedList<>();//will contain everyone who can be moved from the state to it
         Position pos = ((MazeState) curState).getPosition();
 
-        int[][] map = maze.getMaze(); //מעתיק את המבוך אל מערך
+        int[][] map = maze.getMaze(); //copy the maze to a 2D array
         int row = pos.getRowIndex();
         int col = pos.getColumnIndex();
 
-        // תנועה אפשרית: למעלה, למטה, שמאלה, ימינה
         int[] directionRow = {-1, 1, 0, 0};
         int[] directionCol = {0, 0, -1, 1};
 
@@ -67,7 +74,7 @@ public class SearchableMaze implements ISearchable {
             int newRow = row + directionRow[i];
             int newCol = col + directionCol[i];
 
-            //בודק שלא יצאנו מהגבולות של המבוך וזה לא קיר
+            //Checks that we haven't gone outside the boundaries of the maze and that it's not a wall
             if (newRow >= 0 && newRow < map.length &&
                     newCol >= 0 && newCol < map[0].length &&
                     map[newRow][newCol] == 0) {

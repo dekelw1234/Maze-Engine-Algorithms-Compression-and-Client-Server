@@ -7,7 +7,9 @@ import java.util.*;
  */
 public class BestFirstSearch extends ASearchingAlgorithm {
 
-    private int nodesEvaluated = 0;
+    public BestFirstSearch() {
+        this.nodesEvaluated = 0;
+    }
 
     /**
      * Returns the name of the search algorithm.
