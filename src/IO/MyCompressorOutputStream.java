@@ -7,6 +7,7 @@ public class MyCompressorOutputStream extends OutputStream {
     private final OutputStream out;
 
     public MyCompressorOutputStream(OutputStream out) {
+
         this.out = out;
     }
 
