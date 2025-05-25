@@ -11,6 +11,7 @@ public class Server {
     private int listeningIntervalMS;
     private IServerStrategy strategy;
     private boolean stop;
+    private Thread acceptThread;
     private ExecutorService threadPool;
 
     public Server(int port, int listeningIntervalMS, IServerStrategy strategy) {
@@ -22,6 +23,17 @@ public class Server {
     }
 
     public void start(){
+
+        if (acceptThread != null && acceptThread.isAlive()) return;
+
+        acceptThread = new Thread(this::for_start, "Server-Accept-" + port);
+        acceptThread.start();
+
+
+    }
+
+
+    public void for_start(){
         try {
             ServerSocket serverSocket = new ServerSocket(port);
             serverSocket.setSoTimeout(listeningIntervalMS);
