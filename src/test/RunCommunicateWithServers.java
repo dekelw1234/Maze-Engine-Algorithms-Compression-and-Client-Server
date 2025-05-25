@@ -1,7 +1,7 @@
 package test;
 
-import Server.ServerStrategyGenerateMaze;
-import Server.ServerStrategySolveSearchProblem;
+import Server.*;
+
 
 public class RunCommunicateWithServers {
     public static void main(String[] args) {
