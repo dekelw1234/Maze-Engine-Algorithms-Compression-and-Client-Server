@@ -50,6 +50,7 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy{
             }
 
             //3. if not - solve it by the given algorithm
+            System.out.println("Solving maze...");
             SearchableMaze searchableMaze = new SearchableMaze(maze);
             String algorithmName=Configurations.getInstance().getMazeSearchingAlgorithm();
             ISearchingAlgorithm algo;
