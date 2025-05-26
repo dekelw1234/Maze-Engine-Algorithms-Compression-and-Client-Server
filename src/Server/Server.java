@@ -41,30 +41,32 @@ public class Server {
 
     }
 
-
     public void for_start(){
-        try {
-
-            while (!stop) {
+             while (!stop) {
                 try {
-                    Socket clientSocket = this.serverSocket.accept(); //waiting for a new request
-                    threadPool.execute(() -> handleClient(clientSocket)); //when request arrives, it transfers its handling to "someone else" and continues to wait for another order
+                    // waiting for a new request
+                    Socket clientSocket = this.serverSocket.accept();
+
+                    // when request arrives, it transfers its handling to "someone else"
+                    // and continues to wait for another order
+                    threadPool.execute(() -> handleClient(clientSocket));
+
                 } catch (SocketTimeoutException e) {
-                    //time out - just continue to next loop iteration
+                    // continue
+                } catch (IOException e) {
+                    if (stop) break; // someone wants to stop it
+                    throw new RuntimeException("Error while accepting client", e);
                 }
             }
-            threadPool.shutdown(); //don't get new things to do
+            threadPool.shutdown(); // don't get new things to do
             try {
-                if (!threadPool.awaitTermination(10, TimeUnit.SECONDS)) { //waiting to all threads to finish what they are doing
-                    threadPool.shutdownNow(); //force it
+                if (!threadPool.awaitTermination(10, TimeUnit.SECONDS)) {
+                    // waiting for all threads to finish what they are doing
+                    threadPool.shutdownNow(); // force it
                 }
             } catch (InterruptedException e) {
                 threadPool.shutdownNow();
             }
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Server failed on port " + port, e);
-        }
     }
 
     private void handleClient(Socket clientSocket){
@@ -80,5 +82,10 @@ public class Server {
 
     public void stop() {
         stop = true;
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            System.err.println("Failed to close server socket: " + e.getMessage());
+        }
     }
 }
