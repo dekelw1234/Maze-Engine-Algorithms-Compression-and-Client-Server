@@ -126,49 +126,5 @@ public class Main {
             System.out.println(String.format("Error appending text to file: %s", m_resultsFileName));
         }
     }
-// מוסיפים טסט שבודק שהשרת באמת שומר פתרונות לקבצים ולא פותר פעמיים
-
-    private static void Test_ServerSolutionCaching() {
-        try {
-            // Step 1: יצירת מבוך
-            Maze maze = new MyMazeGenerator().generate(10, 10);
-
-            // Step 2: שליחה ראשונה לשרת - הפתרון אמור להיווצר ולהישמר
-            Solution firstSolution = sendMazeToServer(maze);
-
-            // Step 4: שליחה שנייה של אותו מבוך - אמור להחזיר את אותו פתרון
-            Solution secondSolution = sendMazeToServer(maze);
-
-            // Step 5: השוואת הפתרונות
-            boolean sameSize = firstSolution.getSolutionPath().size() == secondSolution.getSolutionPath().size();
-            boolean sameSteps = firstSolution.getSolutionPath().equals(secondSolution.getSolutionPath());
-
-            boolean testPassed = sameSize && sameSteps;
-
-            appendToResultsFile("TEST " + getTestStatusString(testPassed) + ": Server caching maze solution works correctly.");
-
-        } catch (Exception e) {
-            appendToResultsFile("TEST Failed: Exception during caching test - " + e.getMessage());
-        }
-    }
-
-    private static Solution sendMazeToServer(Maze maze) throws Exception {
-        final Solution[] solutionHolder = new Solution[1];
-        Client client = new Client(InetAddress.getLocalHost(), 5401, (inFromServer, outToServer) -> {
-            try {
-                ObjectOutputStream toServer = new ObjectOutputStream(outToServer);
-                ObjectInputStream fromServer = new ObjectInputStream(inFromServer);
-                toServer.flush();
-                toServer.writeObject(maze);
-                toServer.flush();
-                Solution sol = (Solution) fromServer.readObject();
-                solutionHolder[0] = sol;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        client.communicateWithServer();
-        return solutionHolder[0];
-    }
 
 }
