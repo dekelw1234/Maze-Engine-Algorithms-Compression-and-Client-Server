@@ -19,6 +19,8 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy{
         try {
             //1.  receives from the client a Maze object
             ObjectInputStream objectInputStream = new ObjectInputStream(inFromClient); //read the serial object
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outToClient);
+
             Object received = objectInputStream.readObject(); //convert it to object
 
             Maze maze=null;
@@ -54,7 +56,7 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy{
             Solution sol = algo.solve(searchableMaze);
 
             // 3. return Solution object
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outToClient);
+
             objectOutputStream.writeObject(sol);
             objectOutputStream.flush();
             objectOutputStream.close();

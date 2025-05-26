@@ -1,10 +1,11 @@
 package algorithms.search;
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * This class represents a solution to a search problem.
  */
-public class Solution {
+public class Solution implements Serializable {
 
     ArrayList<AState> solutionPath; //the steps for the solution
 

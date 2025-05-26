@@ -1,11 +1,13 @@
 package algorithms.search;
 
+import java.io.Serializable;
+
 /**
  * Represents a state in a problem-solving process.
  * This class is designed to be general, so it can be used for different types of problems in the future.
  */
 
-public abstract class AState {
+public abstract class AState implements Serializable {
 
 
     protected String stateView; //representing the state

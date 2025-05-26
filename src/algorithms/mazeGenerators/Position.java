@@ -1,10 +1,12 @@
 package algorithms.mazeGenerators;
 
 
+import java.io.Serializable;
+
 /**
  * Represents a position (single cell) within a maze, defined by its row and column indices.
  */
-public class Position {
+public class Position implements Serializable {
     private int row;
     private int column;
 

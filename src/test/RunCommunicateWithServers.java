@@ -25,6 +25,7 @@ public class RunCommunicateWithServers {
         // stringReverserServer.start();
 
         // Communicating with servers
+
         CommunicateWithServer_MazeGenerating();
         CommunicateWithServer_SolveSearchProblem();
         // CommunicateWithServer_StringReverser();
@@ -41,15 +42,18 @@ public class RunCommunicateWithServers {
                 @Override
                 public void clientStrategy(InputStream inFromServer, OutputStream outToServer) {
                     try {
+
                         ObjectOutputStream toServer = new ObjectOutputStream(outToServer);
                         ObjectInputStream fromServer = new ObjectInputStream(inFromServer);
                         toServer.flush();
+
+
                         int[] mazeDimensions = new int[]{50, 50};
                         toServer.writeObject(mazeDimensions); // send maze dimensions to server
                         toServer.flush();
                         byte[] compressedMaze = (byte[]) fromServer.readObject(); // read generated maze (compressed with MyCompressor) from server
                         InputStream is = new MyDecompressorInputStream(new ByteArrayInputStream(compressedMaze));
-                        byte[] decompressedMaze = new byte[1000 /*CHANGE SIZE ACCORDING TO YOUR MAZE SIZE*/]; // allocating byte[] for the decompressed maze
+                        byte[] decompressedMaze = new byte[2512 /*CHANGE SIZE ACCORDING TO YOUR MAZE SIZE*/]; // allocating byte[] for the decompressed maze
                         is.read(decompressedMaze); // Fill decompressedMaze with bytes
                         Maze maze = new Maze(decompressedMaze);
                         maze.print();
@@ -70,8 +74,10 @@ public class RunCommunicateWithServers {
                 @Override
                 public void clientStrategy(InputStream inFromServer, OutputStream outToServer) {
                     try {
+
                         ObjectOutputStream toServer = new ObjectOutputStream(outToServer);
                         ObjectInputStream fromServer = new ObjectInputStream(inFromServer);
+
                         toServer.flush();
                         MyMazeGenerator mg = new MyMazeGenerator();
                         Maze maze = mg.generate(50, 50);

@@ -13,6 +13,7 @@ public class Server {
     private boolean stop;
     private Thread acceptThread;
     private ExecutorService threadPool;
+    private ServerSocket serverSocket;
 
     public Server(int port, int listeningIntervalMS, IServerStrategy strategy) {
         this.port = port;
@@ -26,7 +27,15 @@ public class Server {
 
         if (acceptThread != null && acceptThread.isAlive()) return;
 
-        acceptThread = new Thread(this::for_start, "Server-Accept-" + port);
+        try {
+            this.serverSocket = new ServerSocket(port); //OPEN THE SERVER
+            this.serverSocket.setSoTimeout(listeningIntervalMS);
+            System.out.println("Server started on port " + port);
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Failed to open port " + port, e);
+        }
+        acceptThread = new Thread(this::for_start, "Server-Accept-" + port); //if other request will come
         acceptThread.start();
 
 
@@ -35,13 +44,10 @@ public class Server {
 
     public void for_start(){
         try {
-            ServerSocket serverSocket = new ServerSocket(port);
-            serverSocket.setSoTimeout(listeningIntervalMS);
 
             while (!stop) {
                 try {
-
-                    Socket clientSocket = serverSocket.accept(); //waiting for a new request
+                    Socket clientSocket = this.serverSocket.accept(); //waiting for a new request
                     threadPool.execute(() -> handleClient(clientSocket)); //when request arrives, it transfers its handling to "someone else" and continues to wait for another order
                 } catch (SocketTimeoutException e) {
                     //time out - just continue to next loop iteration

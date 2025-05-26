@@ -18,6 +18,8 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
 
             //1. receives from the client an int[] array of size 2- rows & columns
             ObjectInputStream objectInputStream = new ObjectInputStream(inFromClient); //read the serial object
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outToClient); //It important to creat it first so the client will get the header so he can move on
+
             Object received = objectInputStream.readObject(); //convert it to object
 
             int rows=0;
@@ -68,14 +70,20 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
 
             maze=generator.generate(rows,cols);
 
-            //3. compresses it using MyCompressorOutputStream
-            //4. sends back a byte[] array representing the generated maze
-
-            MyCompressorOutputStream compressor=new MyCompressorOutputStream(outToClient);//send the stream where the compressed maze will be saved
-            compressor.write(maze.toByteArray()); //convert the maze to byte array and compress it end send it
-
-            compressor.flush(); //make buffer empty
+            //3. compresses it using MyCompressorOutputStream > into temp stream
+            ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
+            MyCompressorOutputStream compressor = new MyCompressorOutputStream(byteArrayOut);
+            compressor.write(maze.toByteArray()); //convert the maze to byte array
+            compressor.flush();
             compressor.close();
+
+            byte[] compressedMaze = byteArrayOut.toByteArray();  //compress it
+
+            //4. sends back a byte[] array representing the generated maze  > put into the main stream
+            objectOutputStream.writeObject(compressedMaze); //send it
+            objectOutputStream.flush();//make buffer empty
+            objectOutputStream.close();
+
 
         } catch (Exception e) {
             throw new RuntimeException(e);

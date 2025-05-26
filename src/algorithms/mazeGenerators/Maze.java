@@ -1,10 +1,12 @@
 package algorithms.mazeGenerators;
 
+import java.io.Serializable;
+
 /**
  * Represents a maze with a start and goal position.
  * Each cell in the maze can be either a wall (1) or a path (0).
  */
-public class Maze {
+public class Maze implements Serializable {
     private int[][] maze;
     private int rows;
     private int columns;
